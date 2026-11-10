@@ -1,0 +1,281 @@
+.intro {
+  margin-bottom: 20px;
+
+  h1 {
+    margin-bottom: 4px;
+  }
+
+  .notice {
+    margin-top: 12px;
+  }
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 620px;
+  margin: 0 auto 24px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--c-texto-suave);
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    white-space: nowrap;
+
+    &:not(:last-child)::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: var(--c-borde);
+    }
+  }
+
+  span {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--c-borde);
+    color: var(--c-texto-suave);
+  }
+
+  .is-current {
+    color: var(--c-petroleo);
+
+    span {
+      background: var(--c-petroleo);
+      color: #fff;
+    }
+  }
+
+  .is-done span {
+    background: var(--c-lima);
+    color: var(--c-petroleo);
+  }
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.col {
+  min-width: 0;
+  margin: 0;
+  padding: 18px;
+  border: 1px solid var(--c-borde);
+  border-radius: var(--radius);
+}
+
+.col__title {
+  margin: 0 0 14px;
+  padding: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.specialists {
+  display: grid;
+  gap: 10px;
+}
+
+.spec {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--c-borde);
+  border-radius: 12px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--c-turquesa);
+  }
+
+  &:focus-within {
+    box-shadow: var(--focus);
+  }
+
+  &.is-selected {
+    border-color: var(--c-turquesa);
+    background: var(--c-turquesa-50);
+  }
+
+  &:has(input:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.spec__text {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+  justify-items: start;
+}
+
+.spec__specialty {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--c-turquesa);
+}
+
+.spec__chip {
+  margin-top: 4px;
+}
+
+.spec__radio {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 2px solid var(--c-borde);
+  border-radius: 50%;
+
+  .is-selected & {
+    border: 6px solid var(--c-turquesa);
+  }
+}
+
+.placeholder {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 48px 12px;
+  border-radius: 12px;
+  background: var(--c-fondo-suave);
+  color: var(--c-texto-suave);
+  text-align: center;
+}
+
+.slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.slot {
+  display: grid;
+  min-height: 44px;
+  padding: 6px;
+  border: 1.5px solid var(--c-borde);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--c-texto);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: var(--c-turquesa);
+  }
+
+  &.is-selected {
+    border-color: var(--c-petroleo);
+    background: var(--c-petroleo);
+    color: #fff;
+  }
+
+  &:disabled {
+    color: #a5b6ba;
+    background: var(--c-fondo-suave);
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+}
+
+.slot__busy {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: 240px 1fr auto;
+  align-items: end;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: var(--c-turquesa-50);
+}
+
+.summary__topic {
+  margin: 0;
+}
+
+.summary__text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 0.9rem;
+  color: var(--c-petroleo);
+}
+
+.agenda > .notice {
+  margin-top: 14px;
+}
+
+.done {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 24px 8px;
+  text-align: center;
+}
+
+.done__icon {
+  color: var(--c-ok);
+}
+
+.done__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+@media (max-width: 899px) {
+  .cols {
+    grid-template-columns: 1fr;
+  }
+
+  .summary {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 479px) {
+  .stepper {
+    font-size: 0;
+    gap: 6px;
+
+    span {
+      font-size: 0.85rem;
+    }
+  }
+
+  .col {
+    padding: 14px 12px;
+  }
+
+  .slots {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

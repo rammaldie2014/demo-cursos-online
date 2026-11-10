@@ -1,0 +1,171 @@
+.narrow {
+  max-width: 820px;
+}
+
+.crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 14px;
+  color: var(--c-texto-suave);
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+
+.notice {
+  margin-bottom: 18px;
+}
+
+.locked {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+}
+
+.locked__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--c-aviso-bg);
+  color: var(--c-aviso);
+}
+
+.pending {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.quiz {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+
+.question {
+  width: 100%;
+  margin: 0;
+  padding: 18px 20px;
+
+  &--error {
+    border-color: var(--c-error);
+  }
+}
+
+.question__prompt {
+  display: flex;
+  gap: 10px;
+  float: left;
+  width: 100%;
+  margin-bottom: 12px;
+  font-weight: 700;
+
+  + * {
+    clear: both;
+  }
+}
+
+.question__num {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--c-petroleo);
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--c-borde);
+  border-radius: 12px;
+  cursor: pointer;
+
+  input {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--c-turquesa);
+  }
+
+  &:hover {
+    border-color: var(--c-turquesa);
+  }
+
+  &--selected {
+    border-color: var(--c-turquesa);
+    background: var(--c-turquesa-50);
+  }
+}
+
+.result {
+  border-top: 5px solid var(--c-aviso);
+
+  &--ok {
+    border-top-color: var(--c-lima);
+  }
+}
+
+.result__score {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--c-petroleo);
+}
+
+.feedback {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--c-error-bg);
+    color: #6b1a14;
+    font-size: 0.92rem;
+  }
+
+  li.ok {
+    background: #e8f5e9;
+    color: #1b4d20;
+  }
+
+  app-icon {
+    margin-top: 2px;
+  }
+}
+
+.result__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 479px) {
+  .result__actions .btn,
+  .quiz > .btn {
+    width: 100%;
+  }
+}

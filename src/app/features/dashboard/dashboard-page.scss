@@ -1,0 +1,214 @@
+:host {
+  display: block;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.shell__side {
+  position: sticky;
+  top: 120px;
+  min-width: 0;
+}
+
+.shell__main {
+  min-width: 0;
+}
+
+.hello {
+  padding: 24px 28px;
+  background:
+    radial-gradient(circle at 95% 20%, rgb(168 214 0 / 25%), transparent 35%),
+    linear-gradient(120deg, var(--c-turquesa-50), #fff 70%);
+}
+
+.hello__title {
+  margin: 0 0 4px;
+}
+
+.hello__lead {
+  margin: 0;
+}
+
+.guest {
+  margin-top: 16px;
+}
+
+.section {
+  margin-block: 28px;
+}
+
+.course-list,
+.booking-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.course-row {
+  display: grid;
+  grid-template-columns: 150px 1fr auto;
+  gap: 8px 18px;
+  align-items: center;
+  padding: 12px 16px 12px 12px;
+}
+
+.course-row__img {
+  aspect-ratio: 16 / 10;
+  border-radius: 10px;
+}
+
+.course-row__title {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.course-row__meta {
+  margin: 6px 0 0;
+}
+
+.activities {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--c-borde);
+  padding-top: 8px;
+
+  summary {
+    min-height: 32px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--c-petroleo);
+    cursor: pointer;
+  }
+
+  ul {
+    display: grid;
+    gap: 6px;
+    margin: 8px 0 4px;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+  }
+
+  a {
+    flex: 1;
+    color: var(--c-texto);
+  }
+
+  .done {
+    color: var(--c-ok);
+  }
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+}
+
+.mini-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: var(--c-petroleo);
+}
+
+.next__topic {
+  margin: 0;
+  font-weight: 700;
+}
+
+.big-number {
+  margin: 0 0 8px;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--c-petroleo);
+}
+
+.booking {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+}
+
+.booking__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--c-turquesa-100);
+  color: var(--c-petroleo);
+}
+
+.booking__body {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  justify-items: start;
+}
+
+.booking__actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 899px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .shell__side {
+    position: static;
+  }
+}
+
+@media (max-width: 639px) {
+  .hello {
+    padding: 20px;
+  }
+
+  .course-row {
+    grid-template-columns: 96px 1fr;
+  }
+
+  .course-row__actions {
+    grid-column: 1 / -1;
+
+    .btn {
+      width: 100%;
+    }
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking {
+    flex-wrap: wrap;
+  }
+
+  .booking__actions {
+    width: 100%;
+
+    > * {
+      flex: 1;
+    }
+  }
+}

@@ -1,0 +1,131 @@
+<div class="container page">
+  <div class="shell">
+    <aside class="shell__side"><app-learner-sidebar /></aside>
+
+    <div class="shell__main">
+      <section class="hello card">
+        <div>
+          <h1 class="hello__title">¡Hola, {{ greetingName() }}! <span aria-hidden="true">👋</span></h1>
+          <p class="muted hello__lead">Continúa tu ruta de aprendizaje y haz crecer tu negocio.</p>
+        </div>
+      </section>
+
+      @if (session.isGuest()) {
+        <p class="notice notice--warn guest">
+          <app-icon name="info" [size]="16" />
+          <span>
+            Estás como <strong>invitado</strong>. Tu progreso se guarda solo en este navegador y puede perderse si borras sus datos.
+            <a routerLink="/registro">Registrarme (opcional)</a>
+          </span>
+        </p>
+      }
+
+      <section id="mis-cursos" class="section" aria-labelledby="cursos-title">
+        <div class="section-head">
+          <h2 id="cursos-title">Mis cursos ({{ courses().length }})</h2>
+          <a routerLink="/cursos" class="link-arrow">Explorar catálogo <app-icon name="arrow-right" [size]="16" /></a>
+        </div>
+
+        @if (courses().length === 0) {
+          <app-empty-state icon="book" title="Aún no te inscribes en ningún curso" message="Empieza con el curso gratuito «Crea tu marca desde cero».">
+            <a routerLink="/cursos" class="btn">Explorar cursos</a>
+          </app-empty-state>
+        } @else {
+          <ul class="course-list">
+            @for (item of courses(); track item.course.id) {
+              <li class="course-row card">
+                <app-fallback-image class="course-row__img" [image]="item.course.image" fallbackIcon="book" />
+                <div class="course-row__body">
+                  <h3 class="course-row__title">{{ item.course.title }}</h3>
+                  <app-progress-bar [value]="item.percent" [label]="'Avance en ' + item.course.title" />
+                  <p class="hint course-row__meta">
+                    {{ item.percent }}% de avance · {{ item.completed }} de {{ item.total }} instructivos
+                    @if (item.resumeTitle && item.percent < 100) {
+                      · Última lección: {{ item.resumeTitle }}
+                    }
+                  </p>
+                </div>
+                <div class="course-row__actions">
+                  @if (item.certificateReady) {
+                    <a [routerLink]="['/certificado', item.course.slug]" class="btn btn--sm btn--accent">Ver certificado</a>
+                  } @else if (item.assessmentUnlocked) {
+                    <a [routerLink]="['/aprender', item.course.slug, 'evaluacion']" class="btn btn--sm btn--accent">Rendir evaluación</a>
+                  } @else {
+                    <a [routerLink]="item.resumeLink" class="btn btn--sm btn--soft">
+                      {{ item.percent === 0 ? 'Empezar' : 'Continuar' }} <app-icon name="arrow-right" [size]="14" />
+                    </a>
+                  }
+                </div>
+
+                <details class="activities">
+                  <summary>Actividades del curso</summary>
+                  <ul>
+                    @for (activity of item.activities; track activity.id) {
+                      <li>
+                        <app-icon [name]="activity.done ? 'check-circle' : 'file'" [size]="16" [class.done]="activity.done" />
+                        <a [routerLink]="activity.link">{{ activity.label }}</a>
+                        <span class="chip" [class.chip--gray]="!activity.done">{{ activity.done ? 'Completada' : 'Pendiente' }}</span>
+                      </li>
+                    }
+                  </ul>
+                </details>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <div class="summary-grid">
+        <section class="card card--pad next" aria-labelledby="proxima-title">
+          <h2 id="proxima-title" class="mini-title"><app-icon name="calendar" /> Próxima asesoría</h2>
+          @if (nextBooking(); as next) {
+            <p class="next__topic">{{ next.booking.topic }}</p>
+            <p class="hint">Con {{ next.specialistName }} · {{ next.dateLabel }} · {{ next.booking.time }}</p>
+            <a routerLink="/panel" fragment="mis-asesorias" class="link-arrow">Ver detalles <app-icon name="arrow-right" [size]="14" /></a>
+          } @else {
+            <p class="muted">No tienes asesorías agendadas.</p>
+            <a routerLink="/asesorias" class="btn btn--sm btn--soft">Agendar asesoría</a>
+          }
+        </section>
+
+        <section class="card card--pad" aria-labelledby="progreso-title">
+          <h2 id="progreso-title" class="mini-title"><app-icon name="award" /> Mi progreso general</h2>
+          <p class="big-number">{{ overallPercent() }}%</p>
+          <app-progress-bar [value]="overallPercent()" label="Progreso general" />
+          <p class="hint">Certificados disponibles: {{ certificateCount() }}</p>
+        </section>
+      </div>
+
+      <section id="mis-asesorias" class="section" aria-labelledby="asesorias-title">
+        <div class="section-head">
+          <h2 id="asesorias-title">Mis asesorías</h2>
+          <a routerLink="/asesorias" class="link-arrow">Agendar otra <app-icon name="arrow-right" [size]="16" /></a>
+        </div>
+        @if (bookings().length === 0) {
+          <app-empty-state icon="users" title="Sin asesorías agendadas" message="Reserva una asesoría simulada con un especialista de ejemplo.">
+            <a routerLink="/asesorias" class="btn">Ver asesorías</a>
+          </app-empty-state>
+        } @else {
+          <ul class="booking-list">
+            @for (item of bookings(); track item.booking.id) {
+              <li class="booking card">
+                <span class="booking__icon"><app-icon name="calendar" [size]="22" /></span>
+                <div class="booking__body">
+                  <strong>{{ item.booking.topic }}</strong>
+                  <span class="hint">{{ item.specialistName }} · {{ item.dateLabel }} · {{ item.booking.time }}</span>
+                  <span class="chip chip--demo">Reserva simulada</span>
+                </div>
+                <div class="booking__actions">
+                  <a routerLink="/asesorias" [queryParams]="{ reprogramar: item.booking.id }" fragment="agendar" class="btn btn--sm btn--outline">
+                    Reprogramar
+                  </a>
+                  <button type="button" class="btn btn--sm btn--danger" (click)="cancel(item)">Cancelar</button>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,104 @@
+<div class="container page">
+  <header class="catalog-hero">
+    <div>
+      <h1>Catálogo de cursos</h1>
+      <p class="muted">Descubre cursos prácticos para emprender y hacer crecer tu negocio.</p>
+    </div>
+    <form class="search" role="search" (submit)="$event.preventDefault()">
+      <label for="buscar" class="visually-hidden">Buscar cursos</label>
+      <app-icon name="search" class="search__icon" />
+      <input
+        id="buscar"
+        class="input search__input"
+        type="search"
+        placeholder="Buscar cursos (ej. marketing, finanzas, ventas…)"
+        [value]="criteria().query"
+        (input)="setQuery($any($event.target).value)"
+      />
+      <button type="submit" class="btn btn--accent">Buscar</button>
+    </form>
+  </header>
+
+  <div class="layout">
+    <aside class="filters card" aria-labelledby="filtros-title">
+      <button
+        type="button"
+        class="filters__toggle"
+        aria-controls="panel-filtros"
+        [attr.aria-expanded]="filtersOpen()"
+        (click)="filtersOpen.set(!filtersOpen())"
+      >
+        <span id="filtros-title">Filtros</span>
+        <app-icon [name]="filtersOpen() ? 'chevron-up' : 'chevron-down'" class="filters__chevron" />
+      </button>
+
+      <div id="panel-filtros" class="filters__panel" [class.filters__panel--open]="filtersOpen()">
+        <fieldset class="filters__group">
+          <legend>Categoría</legend>
+          @for (option of categoryOptions; track option.value) {
+            <label class="check-row">
+              <input type="checkbox" [checked]="isChecked('categories', option.value)" (change)="toggle('categories', option.value)" />
+              {{ option.label }} <span class="muted">({{ option.count }})</span>
+            </label>
+          }
+        </fieldset>
+
+        <fieldset class="filters__group">
+          <legend>Nivel</legend>
+          @for (option of levelOptions; track option.value) {
+            <label class="check-row">
+              <input type="checkbox" [checked]="isChecked('levels', option.value)" (change)="toggle('levels', option.value)" />
+              {{ option.label }} <span class="muted">({{ option.count }})</span>
+            </label>
+          }
+        </fieldset>
+
+        <fieldset class="filters__group">
+          <legend>Duración</legend>
+          @for (option of durationOptions; track option.value) {
+            <label class="check-row">
+              <input type="checkbox" [checked]="isChecked('durations', option.value)" (change)="toggle('durations', option.value)" />
+              {{ option.label }} <span class="muted">({{ option.count }})</span>
+            </label>
+          }
+        </fieldset>
+
+        <button type="button" class="btn btn--outline btn--sm btn--block" [disabled]="!isFiltered()" (click)="clear()">
+          Limpiar filtros
+        </button>
+      </div>
+    </aside>
+
+    <section class="results" aria-labelledby="resultados-title">
+      <div class="results__bar">
+        <p id="resultados-title" class="results__count" aria-live="polite">
+          {{ results().length }} {{ results().length === 1 ? 'curso encontrado' : 'cursos encontrados' }}
+        </p>
+        <label class="sort">
+          <span>Ordenar por:</span>
+          <select class="select select--inline" [value]="criteria().sort" (change)="setSort($any($event.target).value)">
+            @for (option of sortOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      @if (results().length > 0) {
+        <ul class="grid">
+          @for (course of results(); track course.id) {
+            <li><app-course-card [course]="course" [showPrice]="true" /></li>
+          }
+        </ul>
+      } @else {
+        <app-empty-state
+          icon="search"
+          title="No encontramos cursos con esos criterios"
+          message="Prueba con otra palabra o quita algunos filtros."
+        >
+          <button type="button" class="btn btn--soft" (click)="clear()">Limpiar búsqueda y filtros</button>
+        </app-empty-state>
+      }
+    </section>
+  </div>
+</div>

@@ -1,0 +1,112 @@
+<div class="container page">
+  @if (course(); as course) {
+    @if (lesson(); as lesson) {
+      <a [routerLink]="['/cursos', course.slug]" class="crumb"><app-icon name="chevron-left" [size]="16" /> {{ course.title }}</a>
+
+      <div class="layout">
+        <article class="reader" aria-labelledby="leccion-titulo">
+          <header class="reader__head">
+            <p class="reader__step">{{ lesson.moduleLabel }} de {{ lessons().length }} · Instructivo interactivo</p>
+            <h1 id="leccion-titulo">{{ lesson.title }}</h1>
+            <div class="reader__progress">
+              <app-progress-bar [value]="percent()" label="Avance del curso" />
+              <span class="hint" aria-live="polite">{{ percent() }}% del curso completado</span>
+            </div>
+          </header>
+
+          <section id="objetivo" class="block block--objective">
+            <span class="block__icon"><app-icon name="target" [size]="20" /></span>
+            <div>
+              <h2 class="block__title">Objetivo</h2>
+              <p>{{ lesson.objective }}</p>
+            </div>
+          </section>
+
+          <section id="explicacion" class="block">
+            <h2 class="block__title">Explicación</h2>
+            @for (paragraph of lesson.explanation; track $index) {
+              <p>{{ paragraph }}</p>
+            }
+            <ul class="keypoints">
+              @for (point of lesson.keyPoints; track point) {
+                <li><app-icon name="check" [size]="16" /> {{ point }}</li>
+              }
+            </ul>
+          </section>
+
+          <section id="ejemplo" class="block block--example">
+            <h2 class="block__title"><app-icon name="lightbulb" [size]="18" /> {{ lesson.example.title }}</h2>
+            <p class="muted">{{ lesson.example.intro }}</p>
+            <dl class="example">
+              @for (item of lesson.example.items; track item.label) {
+                <div class="example__row">
+                  <dt>{{ item.label }}</dt>
+                  <dd>{{ item.value }}</dd>
+                </div>
+              }
+            </dl>
+          </section>
+
+          <section id="actividad" class="block block--activity">
+            @for (current of [lesson]; track current.id) {
+              <app-lesson-activity-form
+                [lesson]="current"
+                [initialAnswers]="answers()"
+                [completed]="isCompleted()"
+                (save)="onSave($event)"
+              />
+            }
+          </section>
+
+          <section class="material card" aria-labelledby="material-title">
+            <span class="material__icon"><app-icon name="file" [size]="22" /></span>
+            <div class="material__text">
+              <h2 id="material-title" class="material__title">Material del curso</h2>
+              <p class="hint">Plantilla HTML con instrucciones de los 4 pasos y una ficha con tus respuestas guardadas.</p>
+            </div>
+            <button type="button" class="btn btn--outline btn--sm" (click)="downloadWorkbook()">
+              <app-icon name="download" [size]="16" /> Descargar plantilla
+            </button>
+          </section>
+
+          <nav class="pager" aria-label="Navegación entre instructivos">
+            @if (previous(); as prev) {
+              <a [routerLink]="['/aprender', course.slug, prev.id]" class="btn btn--outline">
+                <app-icon name="arrow-left" [size]="16" /> Lección anterior
+              </a>
+            } @else {
+              <span></span>
+            }
+            @if (next(); as nxt) {
+              <a [routerLink]="['/aprender', course.slug, nxt.id]" class="btn">
+                Siguiente lección <app-icon name="arrow-right" [size]="16" />
+              </a>
+            } @else if (assessmentUnlocked()) {
+              <a [routerLink]="['/aprender', course.slug, 'evaluacion']" class="btn btn--accent">
+                Ir a la evaluación <app-icon name="arrow-right" [size]="16" />
+              </a>
+            } @else {
+              <span class="hint pager__hint">Completa los {{ lessons().length }} pasos para habilitar la evaluación.</span>
+            }
+          </nav>
+        </article>
+
+        <aside class="layout__side">
+          <app-lesson-sidebar
+            [courseSlug]="course.slug"
+            [lessons]="sidebarLessons()"
+            [activeLessonId]="lesson.id"
+            [percent]="percent()"
+            [completed]="completedCount()"
+            [assessmentUnlocked]="assessmentUnlocked()"
+            [certificateReady]="certificateReady()"
+          />
+        </aside>
+      </div>
+    } @else {
+      <app-empty-state icon="search" title="No encontramos este instructivo">
+        <a [routerLink]="['/cursos', course.slug]" class="btn">Volver al curso</a>
+      </app-empty-state>
+    }
+  }
+</div>

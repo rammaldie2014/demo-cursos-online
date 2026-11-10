@@ -1,0 +1,74 @@
+<nav class="toc card" aria-label="Índice del curso">
+  <button
+    type="button"
+    class="toc__toggle"
+    aria-controls="toc-lista"
+    [attr.aria-expanded]="mobileOpen()"
+    (click)="mobileOpen.set(!mobileOpen())"
+  >
+    <span>
+      <strong>Pasos del curso</strong>
+      <span class="hint">{{ completed() }} de {{ lessons().length }} completados</span>
+    </span>
+    <app-icon class="toc__chevron" [name]="mobileOpen() ? 'chevron-up' : 'chevron-down'" />
+  </button>
+  <app-progress-bar class="toc__bar" [value]="percent()" label="Avance del curso" />
+
+  <ol id="toc-lista" class="toc__list" [class.toc__list--open]="mobileOpen()">
+    @for (lesson of lessons(); track lesson.id) {
+      <li class="toc__item" [class.is-active]="lesson.id === activeLessonId()">
+        <a
+          class="toc__link"
+          [routerLink]="['/aprender', courseSlug(), lesson.id]"
+          [attr.aria-current]="lesson.id === activeLessonId() ? 'page' : null"
+        >
+          <span class="toc__status" [class.toc__status--done]="lesson.done">
+            @if (lesson.done) {
+              <app-icon name="check" [size]="14" [stroke]="3" />
+            }
+          </span>
+          <span class="toc__text">
+            <span class="toc__label">{{ lesson.label }}</span>
+            <span class="toc__title">{{ lesson.title }}</span>
+          </span>
+          <span class="visually-hidden">{{ lesson.done ? '(completado)' : '(pendiente)' }}</span>
+        </a>
+        @if (lesson.id === activeLessonId()) {
+          <ul class="toc__sections">
+            @for (section of sections; track section.id) {
+              <li>
+                <a [routerLink]="['/aprender', courseSlug(), lesson.id]" [fragment]="section.id">{{ section.label }}</a>
+              </li>
+            }
+          </ul>
+        }
+      </li>
+    }
+
+    <li class="toc__item" [class.is-active]="onAssessment()">
+      @if (assessmentUnlocked()) {
+        <a class="toc__link" [routerLink]="['/aprender', courseSlug(), 'evaluacion']">
+          <span class="toc__status toc__status--final"><app-icon name="target" [size]="14" /></span>
+          <span class="toc__text"><span class="toc__label">Final</span><span class="toc__title">Evaluación</span></span>
+        </a>
+      } @else {
+        <span class="toc__link toc__link--locked">
+          <span class="toc__status"><app-icon name="lock" [size]="12" /></span>
+          <span class="toc__text">
+            <span class="toc__label">Final</span>
+            <span class="toc__title">Evaluación</span>
+            <span class="hint">Completa los {{ lessons().length }} pasos para habilitarla.</span>
+          </span>
+        </span>
+      }
+    </li>
+    <li class="toc__item">
+      <a class="toc__link" [routerLink]="['/certificado', courseSlug()]">
+        <span class="toc__status" [class.toc__status--done]="certificateReady()">
+          <app-icon [name]="certificateReady() ? 'award' : 'lock'" [size]="12" />
+        </span>
+        <span class="toc__text"><span class="toc__label">Logro</span><span class="toc__title">Certificado</span></span>
+      </a>
+    </li>
+  </ol>
+</nav>

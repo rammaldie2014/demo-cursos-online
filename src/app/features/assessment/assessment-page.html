@@ -1,0 +1,91 @@
+<div class="container page narrow">
+  @if (course(); as course) {
+    <a [routerLink]="['/cursos', course.slug]" class="crumb"><app-icon name="chevron-left" [size]="16" /> {{ course.title }}</a>
+    <h1>Evaluación final</h1>
+
+    @if (!unlocked()) {
+      <section class="card card--pad locked">
+        <span class="locked__icon"><app-icon name="lock" [size]="24" /></span>
+        <h2>La evaluación aún está bloqueada</h2>
+        <p class="muted">Se habilita cuando completas y guardas los 4 instructivos. Te faltan:</p>
+        <ul class="pending">
+          @for (step of pendingSteps(); track step.id) {
+            <li><app-icon name="file" [size]="16" /> {{ step.moduleLabel }}: {{ step.title }}</li>
+          }
+        </ul>
+        <a [routerLink]="resumeLink()" class="btn">Continuar el curso <app-icon name="arrow-right" [size]="16" /></a>
+      </section>
+    } @else if (definition(); as definition) {
+      <p class="muted">
+        Responde {{ definition.questions.length }} preguntas de selección única. Apruebas con al menos
+        {{ definition.passingScore }} de {{ definition.questions.length }} respuestas correctas. Puedes repetirla las veces que quieras.
+      </p>
+
+      @if (previousResult(); as prev) {
+        <p class="notice" [class.notice--ok]="prev.passedAt">
+          <app-icon [name]="prev.passedAt ? 'check-circle' : 'info'" [size]="16" />
+          <span>
+            Último intento: {{ prev.score }}/{{ prev.total }} · Intentos: {{ prev.attempts }}
+            @if (prev.passedAt) {
+              · Aprobada el {{ formatDate(prev.passedAt) }}
+            }
+          </span>
+        </p>
+      }
+
+      @if (graded(); as result) {
+        <section class="card card--pad result" [class.result--ok]="result.passed" aria-live="polite">
+          <p class="result__score">{{ result.score }}/{{ result.total }}</p>
+          <h2>{{ result.passed ? '¡Aprobaste la evaluación!' : 'Aún no alcanzas el puntaje mínimo' }}</h2>
+          <p class="muted">
+            {{ result.passed ? 'Ya puedes ver y descargar tu certificado de demostración.' : 'Repasa los instructivos y vuelve a intentarlo.' }}
+          </p>
+          <ul class="feedback">
+            @for (question of definition.questions; track question.id; let i = $index) {
+              <li [class.ok]="result.correctByQuestion[question.id]">
+                <app-icon [name]="result.correctByQuestion[question.id] ? 'check-circle' : 'x'" [size]="18" />
+                <span><strong>Pregunta {{ i + 1 }}:</strong> {{ result.correctByQuestion[question.id] ? 'Correcta.' : 'Incorrecta.' }} {{ question.feedback }}</span>
+              </li>
+            }
+          </ul>
+          <div class="result__actions">
+            @if (result.passed || certificateAvailable()) {
+              <a [routerLink]="['/certificado', course.slug]" class="btn btn--accent">
+                <app-icon name="award" [size]="16" /> Ver mi certificado
+              </a>
+            }
+            <button type="button" class="btn btn--outline" (click)="retry()">
+              <app-icon name="refresh" [size]="16" /> Reintentar evaluación
+            </button>
+          </div>
+        </section>
+      } @else {
+        <form class="quiz" (submit)="$event.preventDefault(); submit()" novalidate>
+          @for (question of definition.questions; track question.id; let i = $index) {
+            <fieldset class="question card" [class.question--error]="isUnanswered(question.id)">
+              <legend class="question__prompt"><span class="question__num">{{ i + 1 }}</span> {{ question.prompt }}</legend>
+              @for (option of question.options; track option.id) {
+                <label class="option" [class.option--selected]="answers()[question.id] === option.id">
+                  <input
+                    type="radio"
+                    [name]="question.id"
+                    [value]="option.id"
+                    [checked]="answers()[question.id] === option.id"
+                    (change)="choose(question.id, option.id)"
+                  />
+                  <span>{{ option.text }}</span>
+                </label>
+              }
+              @if (isUnanswered(question.id)) {
+                <p class="error-text" role="alert">Selecciona una respuesta para esta pregunta.</p>
+              }
+            </fieldset>
+          }
+          <button type="submit" class="btn btn--lg btn--accent">Enviar respuestas</button>
+        </form>
+      }
+    }
+  } @else {
+    <app-empty-state icon="search" title="Curso no encontrado"><a routerLink="/cursos" class="btn">Ver catálogo</a></app-empty-state>
+  }
+</div>

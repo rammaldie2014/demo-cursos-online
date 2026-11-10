@@ -1,0 +1,87 @@
+<div class="demo-strip no-print" role="note">
+  <div class="container demo-strip__inner">
+    <app-icon name="info" [size]="14" />
+    <span><strong>Demo de presentación:</strong> datos de ejemplo, sin pagos ni registro real. Tu avance se guarda solo en este navegador.</span>
+  </div>
+</div>
+
+<header class="header no-print">
+  <div class="container header__inner">
+    <a routerLink="/" class="header__brand" aria-label="Aprende y Avanza, ir al inicio">
+      <app-brand-logo />
+    </a>
+
+    <nav class="nav" [class.nav--open]="mobileOpen()" id="menu-principal" aria-label="Navegación principal">
+      <ul class="nav__list">
+        <li>
+          <a routerLink="/cursos" routerLinkActive="is-active" class="nav__link">Cursos</a>
+        </li>
+        @for (group of groups; track group.id) {
+          <li class="nav__group">
+            <button
+              type="button"
+              class="nav__link nav__trigger"
+              [attr.aria-expanded]="openMenu() === group.id"
+              [attr.aria-controls]="'submenu-' + group.id"
+              (click)="toggle(group.id)"
+            >
+              {{ group.label }}
+              <app-icon [name]="openMenu() === group.id ? 'chevron-up' : 'chevron-down'" [size]="16" />
+            </button>
+            <ul class="submenu" [id]="'submenu-' + group.id" [hidden]="openMenu() !== group.id">
+              @for (link of group.links; track link.label) {
+                <li>
+                  <a class="submenu__link" [routerLink]="link.route" [fragment]="link.fragment">{{ link.label }}</a>
+                </li>
+              }
+            </ul>
+          </li>
+        }
+      </ul>
+
+      @if (!session.hasProfile()) {
+        <div class="nav__actions">
+          <a routerLink="/iniciar-sesion" class="btn btn--soft btn--sm">Iniciar sesión</a>
+          <a routerLink="/registro" class="btn btn--sm">Registrarse</a>
+        </div>
+      }
+    </nav>
+
+    <div class="header__right">
+      @if (session.hasProfile()) {
+        <div class="user">
+          <button
+            type="button"
+            class="user__trigger"
+            [attr.aria-expanded]="openMenu() === 'usuario'"
+            aria-controls="menu-usuario"
+            (click)="toggle('usuario')"
+          >
+            <span class="avatar avatar--sm" aria-hidden="true">{{ initials() }}</span>
+            <span class="user__name">{{ session.displayName() }}</span>
+            <app-icon name="chevron-down" [size]="16" />
+          </button>
+          <ul class="submenu submenu--right" id="menu-usuario" [hidden]="openMenu() !== 'usuario'">
+            <li><a class="submenu__link" routerLink="/panel"><app-icon name="grid" [size]="16" /> Mi panel</a></li>
+            <li><a class="submenu__link" routerLink="/perfil"><app-icon name="user" [size]="16" /> Mi perfil</a></li>
+            <li><a class="submenu__link" routerLink="/acceso"><app-icon name="refresh" [size]="16" /> Cambiar perfil demo</a></li>
+            <li>
+              <button type="button" class="submenu__link" (click)="signOut()"><app-icon name="log-out" [size]="16" /> Salir</button>
+            </li>
+          </ul>
+        </div>
+      }
+
+      <button
+        type="button"
+        class="icon-btn header__burger"
+        aria-controls="menu-principal"
+        [attr.aria-expanded]="mobileOpen()"
+        [attr.aria-label]="mobileOpen() ? 'Cerrar menú' : 'Abrir menú'"
+        (click)="toggleMobile()"
+      >
+        <app-icon [name]="mobileOpen() ? 'x' : 'menu'" [size]="20" />
+      </button>
+    </div>
+  </div>
+</header>

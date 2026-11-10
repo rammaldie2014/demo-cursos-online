@@ -1,0 +1,158 @@
+<div class="container page">
+  <a routerLink="/cursos" class="back-link"><app-icon name="chevron-left" [size]="16" /> Catálogo de cursos</a>
+
+  @if (course(); as course) {
+    <div class="detail">
+      <div class="detail__main">
+        <header class="summary">
+          <app-fallback-image class="summary__img" [image]="course.image" [eager]="true" fallbackIcon="book" />
+          <div>
+            @if (!course.hasFullDemo) {
+              <span class="chip chip--demo">Curso de ejemplo · contenido no disponible en la demo</span>
+            } @else {
+              <span class="chip chip--lima">Curso gratuito con recorrido completo</span>
+            }
+            <h1 class="summary__title">{{ course.title }}</h1>
+            <p class="summary__desc">{{ course.shortDescription }}</p>
+            <div class="meta-row">
+              <span class="chip">Curso</span>
+              <span><app-icon name="clock" [size]="15" /> {{ course.durationHours }} horas estimadas</span>
+              <span><app-icon name="level" [size]="15" /> Nivel: {{ levelLabel() }}</span>
+              <span><app-icon name="file" [size]="15" /> Instructivos interactivos</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="tabs" role="tablist" aria-label="Información del curso">
+          @for (tab of tabs; track tab.id; let i = $index) {
+            <button
+              type="button"
+              role="tab"
+              class="tabs__tab"
+              [id]="'tab-' + tab.id"
+              [attr.aria-selected]="activeTab() === tab.id"
+              [attr.aria-controls]="'panel-' + tab.id"
+              [attr.tabindex]="activeTab() === tab.id ? 0 : -1"
+              (click)="selectTab(tab.id)"
+              (keydown)="onTabKeydown($event, i)"
+            >
+              {{ tab.label }}
+            </button>
+          }
+        </div>
+
+        @switch (activeTab()) {
+          @case ('descripcion') {
+            <section class="panel" role="tabpanel" id="panel-descripcion" aria-labelledby="tab-descripcion">
+              <p>{{ course.description }}</p>
+              <h2 class="panel__title">¿Qué aprenderás?</h2>
+              <ul class="checklist">
+                @for (objective of course.objectives; track objective) {
+                  <li><app-icon name="check" [size]="16" /> {{ objective }}</li>
+                }
+              </ul>
+              <h2 class="panel__title">Modalidad</h2>
+              <p>{{ course.modality }}</p>
+              <h2 class="panel__title">Materiales</h2>
+              <ul class="checklist">
+                @for (material of course.materials; track material) {
+                  <li><app-icon name="download" [size]="16" /> {{ material }}</li>
+                }
+              </ul>
+            </section>
+          }
+          @case ('modulos') {
+            <section class="panel" role="tabpanel" id="panel-modulos" aria-labelledby="tab-modulos">
+              <h2 class="panel__title">Módulos ({{ course.modules.length }})</h2>
+              <ol class="modules">
+                @for (module of course.modules; track module.title; let i = $index) {
+                  <li class="module">
+                    <button
+                      type="button"
+                      class="module__head"
+                      [attr.aria-expanded]="openModule() === i"
+                      [attr.aria-controls]="'modulo-' + i"
+                      (click)="toggleModule(i)"
+                    >
+                      <span class="module__num">{{ i + 1 }}</span>
+                      <span class="module__title">{{ module.title }}</span>
+                      <app-icon [name]="openModule() === i ? 'chevron-up' : 'chevron-down'" />
+                    </button>
+                    <ul class="module__topics" [id]="'modulo-' + i" [hidden]="openModule() !== i">
+                      @for (topic of module.topics; track topic) {
+                        <li>{{ topic }}</li>
+                      }
+                    </ul>
+                  </li>
+                }
+              </ol>
+            </section>
+          }
+          @case ('certificado') {
+            <section class="panel" role="tabpanel" id="panel-certificado" aria-labelledby="tab-certificado">
+              <h2 class="panel__title">Criterios para obtener el certificado</h2>
+              <ul class="checklist">
+                @for (criterion of course.certificateCriteria; track criterion) {
+                  <li><app-icon name="award" [size]="16" /> {{ criterion }}</li>
+                }
+              </ul>
+              <p class="notice notice--warn">
+                <app-icon name="info" [size]="16" />
+                <span>El certificado es de demostración y no tiene validez académica oficial.</span>
+              </p>
+            </section>
+          }
+        }
+      </div>
+
+      <aside class="buy card card--pad" aria-label="Inscripción">
+        <p class="buy__price" [class.buy__price--free]="course.priceSoles === 0">
+          {{ course.priceSoles === 0 ? 'Gratis' : 'S/ ' + course.priceSoles }}
+        </p>
+        <p class="hint">{{ course.priceSoles | priceLabel }}. No se realizan cobros.</p>
+
+        @if (!course.hasFullDemo) {
+          <button type="button" class="btn btn--block btn--lg" disabled>Inscripción no disponible</button>
+          <p class="hint buy__hint">Este es un curso de ejemplo para mostrar el catálogo.</p>
+          <a routerLink="/cursos/crea-tu-marca" class="btn btn--soft btn--block">Ver el curso gratuito</a>
+        } @else if (isEnrolled()) {
+          <p class="notice notice--ok"><app-icon name="check-circle" [size]="16" /> <span>Ya estás inscrito en este curso.</span></p>
+          <app-progress-bar class="buy__progress" [value]="progressPercent()" label="Avance del curso" />
+          <p class="hint">{{ progressPercent() }}% completado</p>
+          @if (resumeLink(); as link) {
+            <a [routerLink]="link" class="btn btn--accent btn--block btn--lg">
+              {{ progressPercent() === 0 ? 'Empezar curso' : 'Continuar curso' }} <app-icon name="arrow-right" />
+            </a>
+          }
+          <a routerLink="/panel" class="btn btn--outline btn--block buy__secondary">Ir a mi panel</a>
+        } @else {
+          <button type="button" class="btn btn--accent btn--block btn--lg" (click)="requestEnrollment()">
+            Inscribirme gratis <app-icon name="arrow-right" />
+          </button>
+          @if (!session.hasProfile()) {
+            <p class="hint buy__hint">Puedes continuar como invitado; no es obligatorio registrarse.</p>
+          }
+        }
+
+        <ul class="buy__features">
+          <li><app-icon name="clock" [size]="16" /> Acceso inmediato</li>
+          <li><app-icon name="file" [size]="16" /> Instructivos interactivos</li>
+          <li><app-icon name="download" [size]="16" /> Plantilla descargable</li>
+          <li><app-icon name="award" [size]="16" /> Certificado de demostración</li>
+        </ul>
+      </aside>
+    </div>
+
+    <app-access-dialog
+      [open]="dialogOpen()"
+      [queryParams]="dialogParams()"
+      reason="Para inscribirte y guardar tu avance, elige cómo continuar."
+      (guest)="continueAsGuest()"
+      (closed)="dialogOpen.set(false)"
+    />
+  } @else {
+    <app-empty-state icon="search" title="No encontramos este curso" message="Puede que el enlace no sea correcto.">
+      <a routerLink="/cursos" class="btn">Ver catálogo</a>
+    </app-empty-state>
+  }
+</div>

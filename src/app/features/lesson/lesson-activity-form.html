@@ -1,0 +1,99 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate class="activity">
+  <div class="activity__head">
+    <h2 class="activity__title"><app-icon name="edit" /> Actividad práctica</h2>
+    @if (completed()) {
+      <span class="chip chip--lima"><app-icon name="check" [size]="12" /> Paso completado</span>
+    }
+  </div>
+  <p class="muted">{{ lesson().activity.instructions }}</p>
+
+  @if (lesson().sampleAnswers) {
+    <button type="button" class="btn btn--soft btn--sm sample" (click)="useSample()">
+      <app-icon name="lightbulb" [size]="16" /> Usar el ejemplo como punto de partida
+    </button>
+  }
+
+  @if (attempted() && form.invalid) {
+    <p class="notice notice--error" role="alert">
+      <app-icon name="info" [size]="16" />
+      <span>Revisa los campos marcados para poder guardar y completar este paso.</span>
+    </p>
+  }
+
+  @for (field of lesson().activity.fields; track field.id) {
+    <div class="field">
+      <label [for]="controlId(field)">
+        {{ field.label }}
+        @if (field.required) {
+          <span class="req" aria-hidden="true">*</span><span class="visually-hidden">(obligatorio)</span>
+        }
+      </label>
+
+      @switch (field.kind) {
+        @case ('textarea') {
+          <textarea
+            class="textarea"
+            [id]="controlId(field)"
+            [formControlName]="field.id"
+            [attr.placeholder]="field.placeholder ?? null"
+            [attr.maxlength]="field.maxLength ?? null"
+            [attr.aria-invalid]="errorFor(field) !== null"
+            [attr.aria-describedby]="controlId(field) + '-info'"
+            [attr.aria-required]="field.required"
+          ></textarea>
+        }
+        @case ('select') {
+          <select
+            class="select"
+            [id]="controlId(field)"
+            [formControlName]="field.id"
+            [attr.aria-invalid]="errorFor(field) !== null"
+            [attr.aria-describedby]="controlId(field) + '-info'"
+            [attr.aria-required]="field.required"
+          >
+            <option value="">Selecciona una opción</option>
+            @for (option of field.options; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        }
+        @default {
+          <input
+            class="input"
+            [id]="controlId(field)"
+            [formControlName]="field.id"
+            [attr.placeholder]="field.placeholder ?? null"
+            [attr.maxlength]="field.maxLength ?? null"
+            [attr.aria-invalid]="errorFor(field) !== null"
+            [attr.aria-describedby]="controlId(field) + '-info'"
+            [attr.aria-required]="field.required"
+          />
+        }
+      }
+
+      <div class="field__info" [id]="controlId(field) + '-info'">
+        @if (errorFor(field); as error) {
+          <span class="error-text">{{ error }}</span>
+        } @else if (field.hint) {
+          <span class="hint">{{ field.hint }}</span>
+        } @else if (field.minLength) {
+          <span class="hint">Mínimo {{ field.minLength }} caracteres.</span>
+        }
+        @if (field.maxLength && field.kind !== 'select') {
+          <span class="hint counter">{{ lengthOf(field) }}/{{ field.maxLength }}</span>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="activity__actions">
+    <button type="submit" class="btn btn--accent">
+      <app-icon name="save" [size]="16" /> {{ completed() ? 'Guardar cambios' : 'Guardar y completar paso' }}
+    </button>
+    @if (form.dirty) {
+      <span class="hint">Tienes cambios sin guardar.</span>
+    } @else if (completed()) {
+      <span class="hint saved"><app-icon name="check-circle" [size]="14" /> Respuestas guardadas en este navegador.</span>
+    }
+  </div>
+</form>

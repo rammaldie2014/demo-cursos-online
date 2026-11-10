@@ -1,0 +1,120 @@
+import { Course } from '../models';
+
+export const MAIN_COURSE_ID = 'crea-tu-marca';
+
+export const COURSES: readonly Course[] = [
+  {
+    id: MAIN_COURSE_ID,
+    slug: 'crea-tu-marca',
+    title: 'Crea tu marca desde cero',
+    shortDescription: 'Define, construye y posiciona una marca sólida para tu negocio.',
+    description:
+      'Un recorrido práctico de cuatro instructivos para pasar de una idea a una marca con propósito. ' +
+      'En cada paso lees una explicación corta, revisas un ejemplo y aplicas lo aprendido a tu propio proyecto.',
+    category: 'marca',
+    level: 'inicial',
+    durationHours: 3,
+    priceSoles: 0,
+    hasFullDemo: true,
+    featured: true,
+    image: { src: 'images/curso-marca.webp', alt: 'Laptop sobre un escritorio mostrando una paleta de colores de marca' },
+    modality: 'Instructivos interactivos a tu ritmo, con actividades prácticas y plantilla descargable.',
+    objectives: [
+      'Describir tu producto o servicio y el problema que resuelve.',
+      'Identificar a tu cliente ideal y su necesidad principal.',
+      'Redactar una propuesta de valor clara y diferenciada.',
+      'Definir un nombre provisional y la personalidad de tu marca.',
+    ],
+    modules: [
+      { title: 'Tu idea', topics: ['Producto o servicio', 'Problema que resuelves', 'Cómo lo resuelves'] },
+      { title: 'Tu cliente ideal', topics: ['Público objetivo', 'Necesidad principal', 'Dónde encontrarlo'] },
+      { title: 'Tu propuesta de valor', topics: ['Beneficio principal', 'Elemento diferenciador', 'Frase de valor'] },
+      { title: 'Tu marca', topics: ['Nombre provisional', 'Personalidad', 'Tono de comunicación'] },
+    ],
+    materials: [
+      'Plantilla de trabajo en HTML con instrucciones',
+      'Ficha descargable con tus respuestas guardadas',
+      'Evaluación final de 3 preguntas',
+    ],
+    certificateCriteria: [
+      'Completar y guardar los 4 instructivos.',
+      'Aprobar la evaluación final con al menos 2 de 3 respuestas correctas.',
+    ],
+  },
+  {
+    id: 'marketing-digital',
+    slug: 'marketing-digital',
+    title: 'Marketing digital',
+    shortDescription: 'Aprende a promocionar tu negocio en redes, buscadores y otros canales digitales.',
+    description:
+      'Curso de ejemplo para mostrar el catálogo. Presenta estrategias para atraer clientes, crear contenido y medir resultados.',
+    category: 'marketing',
+    level: 'intermedio',
+    durationHours: 8,
+    priceSoles: 89,
+    hasFullDemo: false,
+    featured: true,
+    image: { src: 'images/curso-marketing.webp', alt: 'Laptop con un gráfico de barras y un ícono de megáfono' },
+    modality: 'Instructivos interactivos (contenido de ejemplo).',
+    objectives: ['Definir tu estrategia digital.', 'Crear contenido que conecte.', 'Medir resultados y mejorar.'],
+    modules: [
+      { title: 'Fundamentos del marketing digital', topics: ['Canales', 'Objetivos'] },
+      { title: 'Estrategia y contenidos', topics: ['Calendario', 'Formatos'] },
+      { title: 'Redes sociales para tu negocio', topics: ['Comunidad', 'Publicidad básica'] },
+      { title: 'Medición y mejora de resultados', topics: ['Indicadores', 'Ajustes'] },
+    ],
+    materials: ['Plantilla de calendario de contenidos (ejemplo)'],
+    certificateCriteria: ['Disponible cuando el curso esté habilitado.'],
+  },
+  {
+    id: 'finanzas-emprendedores',
+    slug: 'finanzas-emprendedores',
+    title: 'Finanzas para emprendedores',
+    shortDescription: 'Ordena tus números, controla tus gastos y toma mejores decisiones.',
+    description:
+      'Curso de ejemplo para mostrar el catálogo. Aborda costos, precios y flujo de caja para pequeños negocios.',
+    category: 'finanzas',
+    level: 'inicial',
+    durationHours: 7,
+    priceSoles: 79,
+    hasFullDemo: false,
+    featured: true,
+    image: {
+      src: 'images/curso-finanzas.webp',
+      alt: 'Calculadora, monedas y libreta con la lista costos, precios y flujo de caja',
+    },
+    modality: 'Instructivos interactivos (contenido de ejemplo).',
+    objectives: ['Calcular tus costos.', 'Fijar precios rentables.', 'Proyectar tu flujo de caja.'],
+    modules: [
+      { title: 'Costos del negocio', topics: ['Fijos y variables'] },
+      { title: 'Precios', topics: ['Margen', 'Competencia'] },
+      { title: 'Flujo de caja', topics: ['Ingresos y egresos'] },
+    ],
+    materials: ['Hoja de costos (ejemplo)'],
+    certificateCriteria: ['Disponible cuando el curso esté habilitado.'],
+  },
+  {
+    id: 'ventas-por-internet',
+    slug: 'ventas-por-internet',
+    title: 'Ventas por internet',
+    shortDescription: 'Crea tu canal de ventas online y aprende a atraer, convertir y fidelizar clientes.',
+    description:
+      'Curso de ejemplo para mostrar el catálogo. Explica cómo abrir y gestionar un canal de venta en línea.',
+    category: 'ventas',
+    level: 'intermedio',
+    durationHours: 6,
+    priceSoles: 99,
+    hasFullDemo: false,
+    featured: true,
+    image: { src: 'images/curso-ventas.webp', alt: 'Cajas de envío junto a una laptop con un carrito de compras' },
+    modality: 'Instructivos interactivos (contenido de ejemplo).',
+    objectives: ['Elegir tu canal de venta.', 'Atender pedidos.', 'Fidelizar clientes.'],
+    modules: [
+      { title: 'Tu tienda en línea', topics: ['Opciones de canal'] },
+      { title: 'Atención y despacho', topics: ['Pedidos', 'Entregas'] },
+      { title: 'Fidelización', topics: ['Recompra', 'Recomendaciones'] },
+    ],
+    materials: ['Checklist de lanzamiento (ejemplo)'],
+    certificateCriteria: ['Disponible cuando el curso esté habilitado.'],
+  },
+];

@@ -1,0 +1,89 @@
+<div class="container page">
+  @if (course(); as course) {
+    @if (status(); as status) {
+      <div class="head no-print">
+        <h1>Mi certificado</h1>
+        <p class="muted">{{ course.title }}</p>
+      </div>
+
+      @if (status.kind === 'locked') {
+        <div class="locked-wrap">
+          <div class="locked-preview" aria-hidden="true">
+            <app-certificate-preview [courseTitle]="course.title" holderName="Tu nombre aquí" />
+          </div>
+          <section class="locked card card--pad">
+            <span class="locked__icon"><app-icon name="lock" [size]="24" /></span>
+            <h2>Certificado bloqueado</h2>
+            <p class="muted">Para habilitar tu certificado de demostración te falta:</p>
+            <ul class="pending">
+              @for (item of status.pending; track item) {
+                <li><app-icon name="check" [size]="16" /> {{ item }}</li>
+              }
+            </ul>
+            <a [routerLink]="nextLink()" class="btn">Continuar <app-icon name="arrow-right" [size]="16" /></a>
+          </section>
+        </div>
+      } @else {
+        <div class="ready">
+          <div class="print-area">
+            <app-certificate-preview
+              [courseTitle]="course.title"
+              [holderName]="nameValue()"
+              [dateLabel]="formatDate(status.issuedAt)"
+            />
+          </div>
+
+          <div class="info no-print">
+            <div class="info__item card">
+              <app-icon name="calendar" [size]="22" />
+              <div><span class="hint">Fecha de finalización</span><strong>{{ formatDate(status.issuedAt) }}</strong></div>
+            </div>
+            <div class="info__item card">
+              <app-icon name="clock" [size]="22" />
+              <div><span class="hint">Duración del curso</span><strong>{{ course.durationHours }} horas</strong></div>
+            </div>
+          </div>
+
+          <form class="name card card--pad no-print" (submit)="$event.preventDefault(); saveName()" novalidate>
+            <div class="field">
+              <label for="cert-nombre">Nombre que aparecerá en el certificado <span class="req" aria-hidden="true">*</span></label>
+              <div class="name__row">
+                <input
+                  id="cert-nombre"
+                  class="input"
+                  autocomplete="name"
+                  maxlength="60"
+                  [value]="nameValue()"
+                  (input)="draftName.set($any($event.target).value)"
+                  [attr.aria-invalid]="showNameError() && nameError() !== null"
+                  aria-describedby="cert-nombre-info"
+                />
+                <button type="submit" class="btn btn--soft">Guardar nombre</button>
+              </div>
+              <span id="cert-nombre-info">
+                @if (showNameError() && nameError(); as error) {
+                  <span class="error-text">{{ error }}</span>
+                } @else {
+                  <span class="hint">Se guarda en este navegador. Puedes cambiarlo cuando quieras.</span>
+                }
+              </span>
+            </div>
+          </form>
+
+          <div class="actions no-print">
+            <button type="button" class="btn btn--lg" (click)="print()" [attr.aria-disabled]="!canDownload()">
+              <app-icon name="download" [size]="20" /> Descargar certificado (PDF)
+            </button>
+            <p class="hint">Se abrirá la vista de impresión: elige <strong>«Guardar como PDF»</strong> como destino.</p>
+            <p class="notice notice--warn">
+              <app-icon name="info" [size]="16" />
+              <span>Certificado de demostración sin validez académica oficial. No incluye validación externa ni código QR.</span>
+            </p>
+          </div>
+        </div>
+      }
+    }
+  } @else {
+    <app-empty-state icon="search" title="Curso no encontrado"><a routerLink="/cursos" class="btn">Ver catálogo</a></app-empty-state>
+  }
+</div>

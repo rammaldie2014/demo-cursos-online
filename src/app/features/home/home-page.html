@@ -1,0 +1,74 @@
+<section class="hero" aria-labelledby="hero-title">
+  <app-fallback-image class="hero__photo" [image]="heroImage" [eager]="true" fallbackIcon="briefcase" />
+  <div class="hero__panel">
+    <div class="container hero__content">
+      <h1 id="hero-title" class="hero__title">Tu ruta de aprendizaje emprendedor</h1>
+      <p class="hero__lead">Sigue un camino claro, aprende y aplica en tu negocio.</p>
+      <a routerLink="/cursos" class="btn btn--light btn--lg hero__cta">
+        Explorar cursos <app-icon name="arrow-right" [size]="20" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <section id="ruta" class="route card" aria-labelledby="ruta-title">
+    <h2 id="ruta-title" class="route__title">Ruta de aprendizaje</h2>
+    <ol class="route__steps">
+      @for (step of steps; track step.title; let i = $index, last = $last) {
+        <li class="step" [class.step--last]="last">
+          <div class="step__head">
+            <span class="step__num">{{ i + 1 }}</span>
+            <app-icon class="step__icon" [name]="step.icon" [size]="24" />
+            <h3 class="step__title">{{ step.title }}</h3>
+          </div>
+          <p class="step__desc">{{ step.description }}</p>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <section class="section" aria-labelledby="destacados-title">
+    <div class="section-head">
+      <h2 id="destacados-title">Cursos destacados</h2>
+      <a routerLink="/cursos" class="link-arrow">Ver todos los cursos <app-icon name="arrow-right" [size]="16" /></a>
+    </div>
+    <ul class="course-grid">
+      @for (course of featured(); track course.id) {
+        <li><app-course-card [course]="course" /></li>
+      }
+    </ul>
+  </section>
+
+  <div class="bottom">
+    <section class="advisory card" aria-labelledby="asesorias-title">
+      <app-fallback-image class="advisory__img" [image]="advisoryImage" fallbackIcon="users" />
+      <div class="advisory__intro">
+        <h2 id="asesorias-title">Asesorías</h2>
+        <p class="muted">Acompañamiento personalizado para llevar tu negocio al siguiente nivel.</p>
+      </div>
+      <ul class="advisory__list">
+        @for (topic of advisoryTopics; track topic.label) {
+          <li><app-icon [name]="topic.icon" [size]="20" /> {{ topic.label }}</li>
+        }
+      </ul>
+      <a routerLink="/asesorias" class="btn btn--soft advisory__cta">Ver asesorías <app-icon name="arrow-right" [size]="16" /></a>
+    </section>
+
+    <section id="certificado" class="cert-block card" aria-labelledby="certificado-title">
+      <app-certificate-preview
+        class="cert-block__preview"
+        holderName="Nombre del alumno"
+        courseTitle="Crea tu marca desde cero"
+        [compact]="true"
+      />
+      <div>
+        <h2 id="certificado-title">Recibe tu certificado privado</h2>
+        <p class="muted">
+          Al completar los instructivos y aprobar la evaluación obtienes un certificado de demostración descargable.
+        </p>
+        <a routerLink="/cursos/crea-tu-marca" class="link-arrow">Empieza gratis <app-icon name="arrow-right" [size]="16" /></a>
+      </div>
+    </section>
+  </div>
+</div>

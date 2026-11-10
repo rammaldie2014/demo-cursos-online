@@ -1,0 +1,141 @@
+.toc {
+  padding: 16px;
+}
+
+.toc__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--c-texto);
+  font: inherit;
+  text-align: left;
+  cursor: default;
+
+  > span {
+    display: grid;
+  }
+}
+
+.toc__chevron {
+  display: none;
+}
+
+.toc__bar {
+  margin: 10px 0 12px;
+}
+
+.toc__list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc__item {
+  border: 1px solid var(--c-borde);
+  border-radius: 12px;
+  background: #fff;
+
+  &.is-active {
+    border-color: var(--c-turquesa);
+    background: var(--c-turquesa-50);
+  }
+}
+
+.toc__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 8px 12px;
+  color: var(--c-texto);
+  text-decoration: none;
+}
+
+.toc__link--locked {
+  color: var(--c-texto-suave);
+}
+
+.toc__status {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--c-borde);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--c-texto-suave);
+}
+
+.toc__status--done {
+  border-color: var(--c-lima);
+  background: var(--c-lima);
+  color: var(--c-petroleo);
+}
+
+.toc__status--final {
+  border-color: var(--c-turquesa);
+  color: var(--c-turquesa);
+}
+
+.toc__text {
+  display: grid;
+  line-height: 1.25;
+}
+
+.toc__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--c-texto-suave);
+}
+
+.toc__title {
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.toc__sections {
+  margin: 0;
+  padding: 0 12px 10px 46px;
+  list-style: none;
+  font-size: 0.85rem;
+
+  a {
+    display: block;
+    padding: 4px 0;
+    color: var(--c-petroleo);
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@media (max-width: 1023px) {
+  .toc__toggle {
+    min-height: 44px;
+    cursor: pointer;
+  }
+
+  .toc__chevron {
+    display: inline-flex;
+  }
+
+  .toc__list {
+    display: none;
+  }
+
+  .toc__list--open {
+    display: grid;
+  }
+}

@@ -1,0 +1,155 @@
+<div class="container page">
+  <header class="intro">
+    <h1>Agenda tu asesoría</h1>
+    <p class="muted">Recibe orientación personalizada para llevar tu negocio al siguiente nivel.</p>
+    <p class="notice notice--warn">
+      <app-icon name="info" [size]="16" />
+      <span>
+        <strong>Simulación:</strong> no se realiza una reserva real, no se envía ningún correo ni se efectúa un pago. Los
+        especialistas y horarios son de ejemplo.
+      </span>
+    </p>
+  </header>
+
+  <section id="agendar" class="agenda card card--pad" aria-labelledby="agenda-title">
+    <h2 id="agenda-title" class="visually-hidden">Agendar asesoría</h2>
+
+    @if (confirmed(); as booking) {
+      <div class="done" role="status">
+        <span class="done__icon"><app-icon name="check-circle" [size]="32" /></span>
+        <h2>{{ rescheduling() ? '¡Asesoría reprogramada!' : '¡Asesoría agendada!' }}</h2>
+        <p>
+          <strong>{{ booking.topic }}</strong> con {{ specialistName(booking.specialistId) }}<br />
+          {{ formatDate(booking.date) }} · {{ booking.time }}
+        </p>
+        <p class="hint">Reserva simulada guardada en este navegador. No recibirás correo de confirmación.</p>
+        <div class="done__actions">
+          <a routerLink="/panel" fragment="mis-asesorias" class="btn">Ver en mi panel</a>
+          @if (!rescheduling()) {
+            <button type="button" class="btn btn--outline" (click)="startOver()">Agendar otra</button>
+          }
+        </div>
+      </div>
+    } @else {
+      @if (rescheduling(); as current) {
+        <p class="notice">
+          <app-icon name="refresh" [size]="16" />
+          <span>
+            Reprogramando tu asesoría del {{ formatDate(current.date) }} a las {{ current.time }}. Elige una nueva fecha y hora.
+            <a routerLink="/asesorias">Cancelar reprogramación</a>
+          </span>
+        </p>
+      }
+
+      <ol class="stepper" aria-label="Pasos para agendar">
+        <li [class.is-current]="step() === 1" [class.is-done]="step() > 1"><span>1</span> Especialista</li>
+        <li [class.is-current]="step() === 2" [class.is-done]="step() > 2"><span>2</span> Fecha y hora</li>
+        <li [class.is-current]="step() === 3"><span>3</span> Confirmación</li>
+      </ol>
+
+      <div class="cols">
+        <fieldset class="col">
+          <legend class="col__title">1. Selecciona un especialista</legend>
+          <div class="specialists">
+            @for (item of specialists; track item.id) {
+              <label class="spec" [class.is-selected]="specialistId() === item.id">
+                <input
+                  type="radio"
+                  name="especialista"
+                  class="visually-hidden"
+                  [checked]="specialistId() === item.id"
+                  [disabled]="rescheduling() !== null && rescheduling()?.specialistId !== item.id"
+                  (change)="chooseSpecialist(item)"
+                />
+                <span class="avatar">{{ item.initials }}</span>
+                <span class="spec__text">
+                  <strong>{{ item.name }}</strong>
+                  <span class="spec__specialty">{{ item.specialty }}</span>
+                  <span class="hint">{{ item.description }}</span>
+                  <span class="chip chip--demo spec__chip">Especialista de ejemplo</span>
+                </span>
+                <span class="spec__radio" aria-hidden="true"></span>
+              </label>
+            }
+          </div>
+        </fieldset>
+
+        <div class="col">
+          <h3 class="col__title">2. Elige una fecha y hora</h3>
+          @if (specialist(); as current) {
+            <app-booking-calendar
+              [today]="today"
+              [maxDate]="maxDate"
+              [selected]="date()"
+              [isBookable]="isBookable()"
+              (selectDate)="chooseDate($event)"
+            />
+            @if (date()) {
+              <div class="slots" role="group" [attr.aria-label]="'Horarios para el ' + dateLabel()">
+                @for (slot of slots(); track slot.time) {
+                  <button
+                    type="button"
+                    class="slot"
+                    [class.is-selected]="time() === slot.time"
+                    [disabled]="!slot.available"
+                    [attr.aria-pressed]="time() === slot.time"
+                    (click)="chooseTime(slot.time)"
+                  >
+                    {{ slot.time }}
+                    @if (!slot.available) {
+                      <span class="slot__busy">Ocupado</span>
+                    }
+                  </button>
+                }
+              </div>
+            } @else {
+              <p class="hint">Selecciona un día disponible para ver los horarios de {{ current.name }}.</p>
+            }
+          } @else {
+            <p class="placeholder"><app-icon name="calendar" [size]="28" /> Primero elige un especialista.</p>
+          }
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="field summary__topic">
+          <label for="tema">Tema de la asesoría <span class="req" aria-hidden="true">*</span></label>
+          <select id="tema" class="select" [value]="topic()" (change)="topic.set($any($event.target).value)" [disabled]="!specialist()">
+            @if (!specialist()) {
+              <option value="">Elige un especialista</option>
+            }
+            @for (item of specialist()?.topics ?? []; track item) {
+              <option [value]="item">{{ item }}</option>
+            }
+          </select>
+        </div>
+        <div class="summary__text">
+          <app-icon name="calendar" [size]="22" />
+          <span>
+            @if (specialist() && date() && time()) {
+              <strong>{{ topic() }}</strong><br />
+              Con {{ specialist()?.name }} · {{ dateLabel() }} · {{ time() }}
+            } @else {
+              <span class="muted">Completa los pasos para ver el resumen.</span>
+            }
+          </span>
+        </div>
+        <button type="button" class="btn btn--accent btn--lg" [disabled]="step() < 3" (click)="confirm()">
+          {{ rescheduling() ? 'Confirmar nuevo horario' : 'Confirmar asesoría' }} <app-icon name="arrow-right" [size]="16" />
+        </button>
+      </div>
+
+      @if (error(); as message) {
+        <p class="notice notice--error" role="alert"><app-icon name="info" [size]="16" /> <span>{{ message }}</span></p>
+      }
+    }
+  </section>
+</div>
+
+<app-access-dialog
+  [open]="dialogOpen()"
+  [queryParams]="{ volver: '/asesorias' }"
+  reason="Para guardar tu reserva simulada, elige cómo continuar."
+  (guest)="continueAsGuest()"
+  (closed)="dialogOpen.set(false)"
+/>
